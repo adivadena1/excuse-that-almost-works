@@ -1,7 +1,7 @@
 // The Excuse That Almost Works — one-liner entry.
 // Writes a single line (<=20 words, <=140 chars) to /output/entry.txt.
 // Node 22, deterministic, no network, no dependencies.
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const LINE =
   "Sorry boss, the lift broke with my laptop inside it and the repair guy says Thursday.";
@@ -27,4 +27,9 @@ if (LINE.trim().length === 0 || LINE.includes("\n")) {
 
 mkdirSync("/output", { recursive: true });
 writeFileSync("/output/entry.txt", LINE + "\n", "utf8");
+// Round-trip check: what the judge will read must be exactly the gated line.
+const written = readFileSync("/output/entry.txt", "utf8");
+if (written !== LINE + "\n") {
+  throw new Error("round-trip mismatch: /output/entry.txt does not hold the gated line");
+}
 console.log(`wrote ${words} words, ${LINE.length} chars to /output/entry.txt`);
